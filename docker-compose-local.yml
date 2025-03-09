@@ -1,0 +1,82 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend-service
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${FRONTEND_PORT}
+      - HOSTNAME=${FRONTEND_HOSTNAME}
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    networks:
+      - area-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${FRONTEND_PORT}/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - frontend-volume:/frontend
+      - ./frontend/public:/app/public
+    depends_on:
+      mobile:
+        condition: service_completed_successfully
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend-service
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${BACKEND_PORT}
+      - HOSTNAME=${BACKEND_HOSTNAME}
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    networks:
+      - area-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${BACKEND_PORT}/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - backend-icons-volume:/icons
+
+  mobile:
+    build:
+      context: ./mobile_client
+      dockerfile: Dockerfile
+    container_name: mobile-service
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    networks:
+      - area-network
+    volumes:
+      - frontend-volume:/frontend
+      - ./frontend/public:/dest
+    command: >
+      sh -c "cp /home/builder/app/build/app/outputs/flutter-apk/app-release.apk /dest/app-release.apk"
+
+networks:
+  area-network:
+    driver: bridge
+
+volumes:
+  frontend-volume:
+  backend-icons-volume:
