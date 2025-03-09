@@ -12,6 +12,11 @@
 
 ActionREAction is an automation platform inspired by services like IFTTT and Zapier. It allows users to create automated workflows by connecting various services through actions and reactions. The platform comprises an application server, a web client, and a mobile client, all orchestrated using Docker Compose for seamless deployment and scalability.
 
+
+### Demo
+
+![Demo Video](asset/Make_Applet.mp4)
+
 ## Usage
 
 Clone the repository and navigate to the project directory:
