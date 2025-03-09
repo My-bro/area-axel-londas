@@ -16,7 +16,7 @@ ActionREAction is an automation platform inspired by services like IFTTT and Zap
 ### Demo
 
 <video width="100%" controls>
-  <source src="https://github.com/My-bro/area-axel-londas/raw/main/asset/Make_Applet.mp4" type="video/mp4">
+  <source src="https://github.com/My-bro/area-axel-londas/issues/1" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
